@@ -63,7 +63,38 @@ def getFOGInstances(filname, R_acc_ap, L_acc_ap, R_gyr_ml, L_gyr_ml, sampleRate)
     x_r=np.arange(0,len(t_R_ml)-400,200)
     for w in x_r:
         y_r=np.append(y_r,np.corrcoef(t_R_ml[w:w+200],t_L_ml[w:w+200])[0,1])
-        
+    
+    bool_gyro= abs(y_r) <0.5
+
+    ## FFT based method
+    #Resample from 128 to 200Hz
+    R_ap=np.interp(time200,timeSR,R_acc_ap)
+    L_ap=np.interp(time200,timeSR,L_acc_ap)
+    #Synchronizing both R and L together after correction for the delay
+    t_R_ap=R_ap[round(abs(lag)):-1]
+    t_L_ap=L_ap[0:-round(abs(lag))-1]
+    
+    ratio_L=np.array([],dtype=float)
+    ratio_R=np.array([],dtype=float)
+    for w in x_r:
+        #left
+        fft=abs(np.fft.fft(signal.detrend(L_ap[w:w+20])))
+        freq=np.fft.fftfreq(fft.shape[-1])*200
+        walk_mask=np.logical_and(abs(freq)>0, abs(freq)<3)
+        fog_mask=np.logical_and(abs(freq)>3, abs(freq)<10)
+        ratio_L=np.append(ratio_L,sum(fft.real[fog_mask])**2/sum(fft.real[walk_mask])**2)
+        #right
+        fft=abs(np.fft.fft(signal.detrend(R_ap[w:w+20])))
+        ratio_R=np.append(ratio_R,sum(fft.real[fog_mask])**2/sum(fft.real[walk_mask])**2)
+    
+    bool_acc=np.logical_or(ratio_L>10,ratio_R>10)
+
+    bool_FOG=np.logical_and(bool_acc,bool_gyro)
+
+    
+
+
+
 
 
 
