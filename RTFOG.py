@@ -185,10 +185,10 @@ class RTFOG:
         self.data['left_shank_ax']=self.DataFiltered['left_shank'].sel(channel='ACC_X').values[w_begin:w_end]
         self.data['left_shank_ay']=self.DataFiltered['left_shank'].sel(channel='ACC_Y').values[w_begin:w_end]
         
-        self.data['right_foot_wz']=self.DataFiltered['right_foot'].sel(channel='GYRO_Z').values[w_begin:w_end]
+        self.data['right_foot_wz']=-1*self.DataFiltered['right_foot'].sel(channel='GYRO_Z').values[w_begin:w_end]
         self.data['right_foot_ax']=self.DataFiltered['right_foot'].sel(channel='ACC_X').values[w_begin:w_end]
         self.data['right_foot_ay']=self.DataFiltered['right_foot'].sel(channel='ACC_Y').values[w_begin:w_end]
-        self.data['right_shank_wz']=self.DataFiltered['right_shank'].sel(channel='GYRO_Z').values[w_begin:w_end]
+        self.data['right_shank_wz']=-1*self.DataFiltered['right_shank'].sel(channel='GYRO_Z').values[w_begin:w_end]
         self.data['right_shank_ax']=self.DataFiltered['right_shank'].sel(channel='ACC_X').values[w_begin:w_end]
         self.data['right_shank_ay']=self.DataFiltered['right_shank'].sel(channel='ACC_Y').values[w_begin:w_end]
         
@@ -207,7 +207,7 @@ class RTFOG:
 #test sur des données 
 if __name__=="__main__":
     trial=RTFOG()
-    trial.importC3D('./dataset/FOG_sim/wFOG.c3d', chanelNames=['Left_Tibialis Anterior',
+    trial.importC3D('./dataset/FOG_sim/woFOG.c3d', chanelNames=['Left_Tibialis Anterior',
                                                             'Right_Rectus Femoris',
                                                             'Left_Rectus Femoris',
                                                             'Left_Vastus Lateralis'])
