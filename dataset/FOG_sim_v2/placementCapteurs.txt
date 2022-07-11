@@ -1,0 +1,8 @@
+1-left_shank
+2-left_foot
+3-right_shank
+4-right_foot
+
+axeX : AP
+axeY : Long
+axeZ : ML

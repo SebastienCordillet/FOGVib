@@ -6,6 +6,8 @@ Created on Fri Jan  7 14:11:20 2022
 """
 from pyomeca import Analogs
 import numpy as np
+import pandas as pd
+from ezc3d import c3d
 
 
 def from_c3d(filename, chanelName, acc=True, gyr=True, mag=True, name=""):
@@ -52,3 +54,42 @@ def acc_fromAnalogs(analogs, name="", listChannel=['ACC_X','ACC_Y','ACC_Z']):
 def gyr_fromAnalogs(analogs, name="", listChannel=['GYRO_X','GYRO_Y','GYRO_Z']):
     channels=[name+channel for channel in listChannel]
     return(analogs.sel(channel=channels).values.T)
+
+def getEvents(filec3d, part='EVENT'):
+    c=c3d(filec3d)
+    labels=c['parameters'][part]['LABELS']['value']
+    time=c['parameters'][part]['TIMES']['value'][1,:]
+
+    
+    try:
+        fr_marker=c['parameters']['POINT']['RATE']['value'].astype(int)
+    except Exception:
+        pass
+    
+    try:
+        fr_analog=c['parameters']['ANALOG']['RATE']['value'].astype(int)
+    except Exception:
+        pass
+    
+    try:
+        context=c['parameters'][part]['CONTEXTS']['value']
+    except Exception:
+        pass
+    
+    events=pd.DataFrame(data={
+        'label':labels,
+        'time': time
+        })
+    
+
+    if 'fr_marker' in locals():
+        events['frame_marker']= np.array(time*fr_marker, dtype=int)
+        
+    if 'fr_analog' in locals():
+        events['frame_analog']= np.array(time*fr_analog, dtype=int)
+        
+    if 'context' in locals():
+        events.assign(1, 'Context', context)
+        
+    return(events)
+    

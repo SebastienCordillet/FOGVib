@@ -12,7 +12,7 @@ import plotly.express as px
 import plotly.io as pio
 pio.renderers.default='browser'
 
-from pyIMU.importData import from_c3d, resample
+from pyIMU.importData import from_c3d, resample, getEvents
 
 class RTFOG:
     """
@@ -41,6 +41,7 @@ class RTFOG:
             })
         self.flags=pd.DataFrame(data={
             'windowId':[],
+            'videoFOG':[],
             'cor_foot':[],#maximal correlation
             'cor_shank':[],#maximal correlation
             'left_foot_ax':[],#freezing ratio
@@ -118,16 +119,17 @@ class RTFOG:
     def plotFlags(self):
         data2plot=self.flags.loc[:, self.flags.columns != 'windowId'].to_numpy(dtype=bool).transpose()
         fig=px.imshow(data2plot,labels=dict(x="Time",y=""), color_continuous_scale=["lightgreen", "firebrick"],
-                      y=['cor_foot',
-                      'cor_shank',
-                      'left_foot_ax',
-                      'left_foot_ay',
-                      'right_foot_ax',
-                      'right_foot_ay',
-                      'left_shank_ax',
-                      'left_shank_ay',
-                      'right_shank_ax',
-                      'right_shank_ay'])
+                      y=['videoFOG',
+                         'cor_foot',
+                         'cor_shank',
+                         'left_foot_ax',
+                         'left_foot_ay',
+                         'right_foot_ax',
+                         'right_foot_ay',
+                         'left_shank_ax',
+                         'left_shank_ay',
+                         'right_shank_ax',
+                         'right_shank_ay'])
         fig.update_xaxes(side="top")
         fig.layout.coloraxis.showscale = False
         fig.show()
@@ -206,11 +208,12 @@ class RTFOG:
 
 #test sur des données 
 if __name__=="__main__":
+    file='./dataset/FOG_sim_v2/sujet2S/simFOG.c3d'
     trial=RTFOG()
-    trial.importC3D('./dataset/FOG_sim/woFOG.c3d', chanelNames=['Left_Tibialis Anterior',
-                                                            'Right_Rectus Femoris',
-                                                            'Left_Rectus Femoris',
-                                                            'Left_Vastus Lateralis'])
+    trial.importC3D(file, chanelNames=['Left_Rectus Femoris',
+                                       'Left_Vastus Lateralis',
+                                       'Left_Tibialis Anterior',
+                                       'Right_Rectus Femoris'])
     trial.resampleData()
     trial.filterData()
     trial.loopProcessing()
