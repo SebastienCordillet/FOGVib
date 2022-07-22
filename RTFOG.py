@@ -53,7 +53,7 @@ class RTFOG:
             'left_shank_ay':[],#freezing ratio
             'right_shank_ax':[],#freezing ratio
             'right_shank_ay':[]#freezing ratio
-            })
+            }, dtype='object')
         
         self.DataRaw={} #will contains imu raw data
         self.ResampleRate=200
@@ -277,4 +277,5 @@ if __name__=="__main__":
     trial.loopProcessing()
 
     # trial.plotFlags()
-    trial.timeFlags()
+    #trial.timeFlags()
+    print("PROCESSING  : Done ")

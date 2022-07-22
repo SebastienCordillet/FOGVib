@@ -45,6 +45,7 @@ def resample(analogs, rate=120, times=None):
     
     #utilisation de time_noramlize from pyomeca
     analogs=analogs.meca.time_normalize(time_vector=time)
+    analogs=analogs.assign_attrs({'rate':rate})
     return(analogs)
 
 def acc_fromAnalogs(analogs, name="", listChannel=['ACC_X','ACC_Y','ACC_Z']):
